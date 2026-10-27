@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Proyecto 1 | Integración numérica</title>
+		<link rel="stylesheet" href="estilos.css">
+	</head>
+	<body>
+		<header>
+			<div class="wrap">
+				<h1>Integración numérica</h1>
+				<p>Simulador académico · Problemas aplicados a La Paz, Bolivia</p>
+				<nav>
+					<a href="#teoria">Métodos</a>
+					<a href="#ejercicios">Ejercicios</a>
+					<a href="#calculadora">Calculadora</a>
+					<a href="#informe">Informe</a>
+					<a href="#pruebas">Pruebas</a>
+				</nav>
+			</div>
+		</header>
+		<main class="wrap">
+			<section class="card" id="teoria">
+				<h2>1. Introducción y métodos</h2>
+				<p>La integración numérica aproxima una integral definida mediante valores de una función. Aquí se comparan el trapecio compuesto, Simpson 1/3 y Simpson 3/8; los datos del documento son didácticos, no mediciones reales de La Paz.</p>
+				<div class="grid">
+					<article class="tile">
+						<h3>Trapecio compuesto</h3>
+						<p>T = h[(f₀+fₙ)/2 + Σfᵢ]</p>
+						<small>Admite cualquier n positivo.</small>
+					</article>
+					<article class="tile">
+						<h3>Simpson 1/3</h3>
+						<p>S = h/3 [f₀+fₙ+4Σfᵢ impares+2Σfᵢ pares]</p>
+						<small>Requiere n par.</small>
+					</article>
+					<article class="tile">
+						<h3>Simpson 3/8</h3>
+						<p>S = 3h/8 [f₀+fₙ+3Σfᵢ no múltiplos de 3+2Σfᵢ múltiplos de 3]</p>
+						<small>Requiere n múltiplo de 3.</small>
+					</article>
+				</div>
+				<p><strong>Espaciado:</strong> h = (b − a) / n. <strong>Error:</strong> |referencia − aproximación|; porcentaje = 100 × error / |referencia| (si referencia ≠ 0).</p>
+			</section>
+			<section class="card" id="ejercicios">
+				<h2>2. Tabla de ejercicios (19–27)</h2>
+				<p>Selecciona uno para cargar sus datos. El ejercicio 26 requiere ingresar las anchuras del lago: el solucionario no proporciona esa tabla.</p>
+				<div class="tablewrap">
+					<table>
+						<thead>
+							<tr>
+								<th>Ej.</th>
+								<th>Contexto</th>
+								<th>Qué se calcula</th>
+								<th>Estado</th>
+							</tr>
+						</thead>
+						<tbody id="catalogo"></tbody>
+					</table>
+				</div>
+			</section>
+			<section class="card" id="calculadora">
+				<h2>3. Calculadora y problemas resueltos</h2>
+				<div class="controls">
+					<label>Ejercicio
+						<select id="ejercicio"></select>
+					</label>
+					<label>Método
+						<select id="metodo">
+							<option value="todos">Comparar métodos</option>
+							<option value="trapecio">Trapecio compuesto</option>
+							<option value="simpson13">Simpson 1/3</option>
+							<option value="simpson38">Simpson 3/8</option>
+							<option value="mixto">Simpson combinado (4 + 3)</option>
+						</select>
+					</label>
+					<label>Subintervalos n
+						<input id="n" type="number" min="1" step="1" value="8">
+					</label>
+				</div>
+				<p id="descripcion"></p>
+				<p class="note" id="modelo"></p>
+				<div class="grid two">
+					<label>Valores x (separados por comas)
+						<textarea id="xs" rows="3"></textarea>
+					</label>
+					<label>Valores y / f(x) (separados por comas)
+						<textarea id="ys" rows="3"></textarea>
+					</label>
+				</div>
+				<div class="controls">
+					<label>Modo de datos
+						<select id="modo">
+							<option value="tabla">Tabla x,y</option>
+							<option value="funcion">Función predefinida del ejercicio</option>
+						</select>
+					</label>
+					<label>Límite a
+						<input id="a" type="number" step="any">
+					</label>
+					<label>Límite b
+						<input id="b" type="number" step="any">
+					</label>
+					<label>Valor de referencia (opcional)
+						<input id="referencia" type="number" step="any" placeholder="Si se conoce">
+					</label>
+				</div>
+				<div class="buttons">
+					<button id="calcular">Calcular</button>
+					<button id="restaurar" class="secondary">Restaurar datos del ejercicio</button>
+				</div>
+				<p id="aviso" role="status"></p>
+				<div id="salida" hidden>
+					<h3>Resultados y comparación</h3>
+					<div id="resumen"></div>
+					<div class="tablewrap">
+						<table>
+							<thead>
+								<tr>
+									<th>Método</th>
+									<th>Resultado</th>
+									<th>Error absoluto</th>
+									<th>Error %</th>
+								</tr>
+							</thead>
+							<tbody id="resultados"></tbody>
+						</table>
+					</div>
+					<h3>Tabla de factores y sustitución</h3>
+					<p id="procedimiento"></p>
+					<div class="tablewrap">
+						<table>
+							<thead>
+								<tr>
+									<th>i</th>
+									<th>xᵢ</th>
+									<th>fᵢ</th>
+									<th>Peso</th>
+									<th>Peso × fᵢ</th>
+								</tr>
+							</thead>
+							<tbody id="pesos"></tbody>
+						</table>
+					</div>
+					<h3>Gráfico de datos / curva</h3>
+					<canvas id="grafico" width="900" height="320" aria-label="Gráfico de datos de integración"></canvas>
+				</div>
+			</section>
+			<section class="card" id="informe">
+				<h2>4. Informe técnico resumido</h2>
+				<p><strong>Objetivo:</strong> aproximar integrales de problemas de transporte, geometría, energía y otras áreas, verificando las condiciones de cada método.</p>
+				<p><strong>Procedimiento:</strong> identificar magnitudes y unidades, definir el intervalo y los datos, calcular h, aplicar pesos de integración, comparar con una referencia cuando exista y analizar el error.</p>
+				<p><strong>Interpretación:</strong> los resultados dependen del número de subintervalos y de la regularidad de los datos. Una aproximación no sustituye mediciones reales.</p>
+			</section>
+			<section class="card" id="pruebas">
+				<h2>5. Pruebas de validación</h2>
+				<p>Prueba obligatoria: integrar f(x)=x² desde 0 hasta 2; el valor exacto es 8/3 = 2.666666667.</p>
+				<button id="probar" class="secondary">Ejecutar pruebas automáticas</button>
+				<div id="pruebasResultado"></div>
+				<p>También prueba manualmente valores no numéricos, longitudes distintas, x no creciente y n incompatible con Simpson.</p>
+			</section>
+		</main>
+		<script src="app.js"></script>
+	</body>
+</html>
